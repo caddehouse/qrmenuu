@@ -1,4 +1,4 @@
-Ürün, Açıklama, Fiyat, Resim, Kategori
+productName,productDescription,productPrice,productImage,category
 Milkshake Çeşitleri,,130,,Özel Soğuk İçecekler
 Frozen Çeşitleri,,125,,Özel Soğuk İçecekler
 ,,,,
@@ -105,5 +105,4 @@ Su,,30,,Meşrubatlar
 Çay,,30,,Çaylar
 Fincan Çay,,60,,Çaylar
 Bitkisel Çaylar,,125,,Çaylar
-
 Oralet Çeşitleri,,40,,Çaylar
