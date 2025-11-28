@@ -54,64 +54,66 @@
         }
 
         function displayMenu(menuData) {
-            const menuContainer = document.getElementById('menu');
+    const menuContainer = document.getElementById('menu');
 
-            let categories = [...new Set(menuData.menu.map(item => item.category))];
+    const desiredOrder = [
+        "Meşrubatlar",
+        "Soğuk Kahveler",
+        "Sıcak Kahveler",
+        "Özel Soğuk İçecekler",
+        "Özel Sıcak İçecekler",
+        "Meyve Suları",
+        "Çaylar",
+        "Tatlılar",
+        "Aperatifler",
+        "Kahvaltı",
+        "Burgerler",
+        "Makarnalar",
+        "Tavuk Yemekleri",
+        "Et Yemekleri",
+        "Salatalar"
+    ];
 
-            const desiredOrder = [
-                "Meşrubatlar",
-                "Soğuk Kahveler",
-                "Sıcak Kahveler",
-                "Özel Soğuk İçecekler",
-                "Özel Sıcak İçecekler",
-                "Meyve Suları",
-                "Çaylar",
-                "Tatlılar",
-                "Aperatifler",
-                "Kahvaltı",
-                "Burgerler",
-                "Makarnalar",
-                "Tavuk Yemekleri",
-                "Et Yemekleri",
-                "Salatalar"
-            ];
+    // Sadece mevcut kategorileri al ve sıralı göster
+    let categories = desiredOrder.filter(cat =>
+        menuData.menu.some(item => item.category && item.category.trim() === cat)
+    );
 
-            categories.sort((a, b) => desiredOrder.indexOf(a) - desiredOrder.indexOf(b));
+    categories.forEach(category => {
+        const categorySection = document.createElement('div');
+        categorySection.className = 'mb-6';
 
-            categories.forEach(category => {
-                const categorySection = document.createElement('div');
-                categorySection.className = 'mb-6';
+        const categoryTitle = document.createElement('h2');
+        categoryTitle.className = 'text-2xl font-bold mb-4';
+        categoryTitle.textContent = category;
 
-                const categoryTitle = document.createElement('h2');
-                categoryTitle.className = 'text-2xl font-bold mb-4';
-                categoryTitle.textContent = category;
+        const itemsGrid = document.createElement('div');
+        itemsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
 
-                const itemsGrid = document.createElement('div');
-                itemsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+        menuData.menu
+            .filter(item => item.category && item.category.trim() === category)
+            .forEach(item => {
+                const menuItem = document.createElement('div');
+                menuItem.className = 'bg-white rounded-lg shadow-lg overflow-hidden';
 
-                menuData.menu
-                    .filter(item => item.category === category)
-                    .forEach(item => {
-                        const menuItem = document.createElement('div');
-                        menuItem.className = 'bg-white rounded-lg shadow-lg overflow-hidden';
-
-                        menuItem.innerHTML = `
-              <div class="flex flex-col p-4">
-                    <div class="menu-content flex justify-between items-start">
-                        <a class="text-lg font-semibold break-words">${item.productName}</a>
-                        <span class="text-gray-900 font-extrabold text-lg ml-4">${item.productPrice} TL</span>
-                    </div>
-                    ${item.productDescription ? `<div class="menu-ingredients text-xs text-gray-600 mt-2">${item.productDescription}</div>` : ''}
-              </div>
-            `;
-                        itemsGrid.appendChild(menuItem);
-                    });
-
-                categorySection.appendChild(categoryTitle);
-                categorySection.appendChild(itemsGrid);
-                menuContainer.appendChild(categorySection);
+                menuItem.innerHTML = `
+                  <div class="flex flex-col p-4">
+                        <div class="menu-content flex justify-between items-start">
+                            <a class="text-lg font-semibold break-words">${item.productName}</a>
+                            <span class="text-gray-900 font-extrabold text-lg ml-4">${item.productPrice} TL</span>
+                        </div>
+                        ${item.productDescription ? `<div class="menu-ingredients text-xs text-gray-600 mt-2">${item.productDescription}</div>` : ''}
+                  </div>
+                `;
+                itemsGrid.appendChild(menuItem);
             });
-        }
+
+        categorySection.appendChild(categoryTitle);
+        categorySection.appendChild(itemsGrid);
+        menuContainer.appendChild(categorySection);
+    });
+}
+
 
         loadMenu();
     </script>
