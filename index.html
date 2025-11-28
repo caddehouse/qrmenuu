@@ -21,12 +21,12 @@
     </div>
   </footer>
 
-  <!-- PapaParse kütüphanesi -->
+  <!-- PapaParse kütüphanesi CSV için -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <script>
-    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTAXngTxVZ7_mExTFAHXATjChoQc4CKy_ob_2jAFcfY8bwoN6VBfCoMCc9u81PdRa-MJyQerdcw7wj0/pub?output=csv";
+    const csvUrl = "menu.csv"; // CSV dosyan kökte
 
-    Papa.parse(sheetUrl, {
+    Papa.parse(csvUrl, {
       download: true,
       header: true,
       skipEmptyLines: true,
@@ -34,14 +34,13 @@
         const menuData = results.data;
         const menuContainer = document.getElementById("menu");
 
-        // Eğer data boşsa uyar
         if (!menuData || menuData.length === 0) {
           menuContainer.innerHTML = "<p>Menü verisi bulunamadı.</p>";
           return;
         }
 
-        // Varsayalım sheet’te sütun isimleri: Ürün, Açıklama, Fiyat, Resim, Kategori
-        const categories = [...new Set(menuData.map(item => item.Kategori || "Genel"))];
+        // Kategorileri al
+        const categories = [...new Set(menuData.map(item => item.category || "Genel"))];
 
         categories.forEach(category => {
           const section = document.createElement("div");
@@ -56,21 +55,21 @@
           grid.className = "grid grid-cols-1 md:grid-cols-2 gap-4";
 
           menuData
-            .filter(item => (item.Kategori || "Genel") === category)
+            .filter(item => (item.category || "Genel") === category)
             .forEach(item => {
               const card = document.createElement("div");
               card.className = "bg-white rounded-lg shadow-lg overflow-hidden";
 
               card.innerHTML = `
                 <div class="flex gap-4 p-4">
-                  ${item.Resim ? `<img src="${item.Resim}" alt="${item.Ürün}" class="w-24 h-24 object-cover border rounded-lg">` : ""}
+                  ${item.productImage ? `<img src="${item.productImage}" alt="${item.productName}" class="w-24 h-24 object-cover border rounded-lg">` : ""}
                   <div class="flex flex-col justify-between w-full">
                     <div class="menu-content flex justify-between items-center">
-                      <span class="text-lg font-semibold">${item.Ürün}</span>
-                      <span class="text-gray-900 font-bold">${item.Fiyat} TL</span>
+                      <span class="text-lg font-semibold">${item.productName || "Ürün adı yok"}</span>
+                      <span class="text-gray-900 font-bold">${item.productPrice ? item.productPrice + " TL" : "Fiyat yok"}</span>
                     </div>
                     <div class="menu-ingredients text-xs text-gray-600 mt-2">
-                      ${item.Açıklama || ""}
+                      ${item.productDescription || "Açıklama yok"}
                     </div>
                   </div>
                 </div>
@@ -83,9 +82,8 @@
         });
       },
       error: function(err) {
-        console.error("PapaParse error:", err);
-        const menuContainer = document.getElementById("menu");
-        menuContainer.innerHTML = "<p>Menü yüklenirken hata oluştu.</p>";
+        console.error("Menü yüklenirken hata oluştu:", err);
+        document.getElementById("menu").innerHTML = "<p>Menü yüklenirken hata oluştu.</p>";
       }
     });
   </script>
