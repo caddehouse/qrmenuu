@@ -100,7 +100,7 @@
                 <img src="${item.productImage}" alt="${item.productName}" class="w-24 h-24 object-cover border rounded-lg">
                 <div class="flex flex-col items-between w-full">
                     <div class="menu-content flex justify-between items-center">
-                        <a class="text-lg font-semibold truncate max-w-[70%]">${item.productName}</a>
+                        <a class="text-lg font-semibold break-words">${item.productName}</a>
                         <span class="text-gray-900 font-extrabold text-lg ml-4">${item.productPrice} TL</span>
                     </div>
                     ${item.productDescription ? `<div class="menu-ingredients text-xs text-gray-600 mt-2">${item.productDescription}</div>` : ''}
