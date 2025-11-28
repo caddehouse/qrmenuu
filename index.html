@@ -1,93 +1,126 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Restaurant Menu</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Menu</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-100">
-  <header class="bg-white shadow-md">
-    <div class="container mx-auto p-4 flex justify-center items-center">
-      <h1 class="text-xl font-bold">Restaurant Menu</h1>
-    </div>
-  </header>
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto p-4 flex justify-center items-center">
+            <h1 class="text-xl font-bold">Restaurant Menu</h1>
+        </div>
+    </header>
 
-  <div id="menu" class="container mx-auto p-4 grid grid-cols-1 gap-4 mt-4"></div>
+    <div id="menu" class="container mx-auto p-4 grid grid-cols-1 md:grid-cols-1 gap-4 mt-4"></div>
 
-  <footer class="bg-white shadow-md mt-4">
-    <div class="container mx-auto p-4 text-center">
-      <p class="text-gray-600">&copy; 2025 Restaurant Menu</p>
-    </div>
-  </footer>
+    <footer class="bg-white shadow-md mt-4">
+        <div class="container mx-auto p-4 text-center">
+            <p class="text-gray-600">&copy; 2025 Restaurant Menu</p>
+        </div>
+    </footer>
 
-  <!-- PapaParse kütüphanesi CSV için -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-  <script>
-    const csvUrl = "menu.csv"; // CSV dosyan repo kökte
+    <script>
+        const url = 'menu.csv'; // CSV dosya yolu
 
-    Papa.parse(csvUrl, {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: function(results) {
-        const menuData = results.data;
-        const menuContainer = document.getElementById("menu");
-
-        if (!menuData || menuData.length === 0) {
-          menuContainer.innerHTML = "<p>Menü verisi bulunamadı.</p>";
-          return;
+        async function loadMenu() {
+            try {
+                const response = await fetch(url);
+                const data = await response.text();
+                const menuData = processCSV(data);
+                displayMenu(menuData);
+            } catch (error) {
+                console.error('Error loading menu:', error);
+            }
         }
 
-        // Sadece kategori atanmış ürünler için kategorileri al
-        const categories = [...new Set(
-          menuData
-            .filter(item => item.category && item.category.trim() !== "")
-            .map(item => item.category)
-        )];
+        function processCSV(data) {
+            const lines = data.split('\n').filter(line => line.trim() !== '');
+            const headers = lines[0].split(',');
+            const menuItems = lines.slice(1).map(line => {
+                const cols = line.split(',');
+                return {
+                    productName: cols[0],
+                    productDescription: cols[1],
+                    productPrice: cols[2],
+                    productImage: cols[3],
+                    category: cols[4]
+                };
+            }).filter(item => item.category && item.category.trim() !== '');
+            return { menu: menuItems };
+        }
 
-        categories.forEach(category => {
-          const section = document.createElement("div");
-          section.className = "mb-6";
+        function displayMenu(menuData) {
+            const menuContainer = document.getElementById('menu');
 
-          const title = document.createElement("h2");
-          title.className = "text-2xl font-bold mb-4";
-          title.textContent = category;
-          section.appendChild(title);
+            // Mevcut kategoriler
+            let categories = [...new Set(menuData.menu.map(item => item.category))];
 
-          const grid = document.createElement("div");
-          grid.className = "grid grid-cols-1 md:grid-cols-2 gap-4";
+            // İstediğimiz kategori sırası
+            const desiredOrder = [
+                "Özel Soğuk İçecekler",
+                "Soğuk Kahveler",
+                "Sıcak Kahveler",
+                "Tatlılar",
+                "Aperatifler",
+                "Salatalar",
+                "Makarnalar",
+                "Burgerler",
+                "Tavuk Yemekleri",
+                "Kahvaltı",
+                "Et Yemekleri",
+                "Meyve Suları",
+                "Özel Sıcak İçecekler",
+                "Meşrubatlar",
+                "Çaylar"
+            ];
 
-          menuData
-            .filter(item => item.category && item.category.trim() !== "" && item.category === category)
-            .forEach(item => {
-              const card = document.createElement("div");
-              card.className = "bg-white rounded-lg shadow-lg overflow-hidden";
+            // Mevcut kategorileri sıralama
+            categories.sort((a, b) => desiredOrder.indexOf(a) - desiredOrder.indexOf(b));
 
-              card.innerHTML = `
-                <div class="flex gap-4 p-4">
-                  ${item.productImage ? `<img src="${item.productImage}" alt="${item.productName}" class="w-24 h-24 object-cover border rounded-lg">` : ""}
-                  <div class="flex flex-col justify-between w-full">
+            categories.forEach(category => {
+                const categorySection = document.createElement('div');
+                categorySection.className = 'mb-6';
+
+                const categoryTitle = document.createElement('h2');
+                categoryTitle.className = 'text-2xl font-bold mb-4';
+                categoryTitle.textContent = category;
+
+                const itemsGrid = document.createElement('div');
+                itemsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+
+                menuData.menu
+                    .filter(item => item.category === category)
+                    .forEach(item => {
+                        const menuItem = document.createElement('div');
+                        menuItem.className = 'bg-white rounded-lg shadow-lg overflow-hidden';
+
+                        menuItem.innerHTML = `
+              <div class="flex gap-4 p-4">
+                <img src="${item.productImage}" alt="${item.productName}" class="w-24 h-24 object-cover border rounded-lg">
+                <div class="flex flex-col items-between w-full">
                     <div class="menu-content flex justify-between items-center">
-                      <span class="text-lg font-semibold">${item.productName || "Ürün adı yok"}</span>
-                      <span class="text-gray-900 font-bold">${item.productPrice ? item.productPrice + " TL" : "Fiyat yok"}</span>
+                        <a class="text-lg font-semibold">${item.productName}</a>
+                        <span class="text-gray-900 font-bold">${item.productPrice} TL</span>
                     </div>
-                    ${item.productDescription ? `<div class="menu-ingredients text-xs text-gray-600 mt-2">${item.productDescription}</div>` : ""}
-                  </div>
+                    ${item.productDescription ? `<div class="menu-ingredients text-xs text-gray-600 mt-2">${item.productDescription}</div>` : ''}
                 </div>
-              `;
-              grid.appendChild(card);
-            });
+              </div>
+            `;
+                        itemsGrid.appendChild(menuItem);
+                    });
 
-          section.appendChild(grid);
-          menuContainer.appendChild(section);
-        });
-      },
-      error: function(err) {
-        console.error("Menü yüklenirken hata oluştu:", err);
-        document.getElementById("menu").innerHTML = "<p>Menü yüklenirken hata oluştu.</p>";
-      }
-    });
-  </script>
+                categorySection.appendChild(categoryTitle);
+                categorySection.appendChild(itemsGrid);
+                menuContainer.appendChild(categorySection);
+            });
+        }
+
+        loadMenu();
+    </script>
 </body>
+
 </html>
