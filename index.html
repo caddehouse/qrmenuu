@@ -72,9 +72,7 @@
                       <span class="text-lg font-semibold">${item.productName || "Ürün adı yok"}</span>
                       <span class="text-gray-900 font-bold">${item.productPrice ? item.productPrice + " TL" : "Fiyat yok"}</span>
                     </div>
-                    <div class="menu-ingredients text-xs text-gray-600 mt-2">
-                      ${item.productDescription || "Açıklama yok"}
-                    </div>
+                    ${item.productDescription ? `<div class="menu-ingredients text-xs text-gray-600 mt-2">${item.productDescription}</div>` : ""}
                   </div>
                 </div>
               `;
