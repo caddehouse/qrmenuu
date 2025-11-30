@@ -20,12 +20,11 @@
     /* Büyük ve çapraz CADDE HOUSE watermark */
 .watermark {
     position: fixed;
-    top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) rotate(-18deg);
+    transform: translateX(-50%) rotate(-18deg);
     font-size: clamp(40px, 12vw, 150px); /* Mobilden büyük ekrana uyumlu */
     font-weight: 900;
-    color: rgba(255, 140, 0, 0.07);
+    color: rgba(255, 140, 0, 0.12); /* Daha koyu turuncu-kahve */
     z-index: -1;
     pointer-events: none;
     white-space: nowrap;
@@ -33,10 +32,19 @@
     text-align: center;
 }
 
+/* İki watermark için farklı top konumları */
+.watermark1 {
+    top: 40%; /* üstteki yazı */
+}
+.watermark2 {
+    top: 60%; /* alttaki yazı */
+}
+
+
 
     /* Menü kutuları */
     .menu-box {
-        background: rgba(255, 255, 255, 0.95);
+        color: rgba(255, 140, 0, 0.07);
         backdrop-filter: blur(3px);
         padding: 14px;
         border-radius: 12px;
@@ -48,7 +56,9 @@
 </head>
 
 <body>
-    <div class="watermark">CADDE HOUSE</div>
+    <div class="watermark watermark1">CADDE HOUSE</div>
+    <div class="watermark watermark2">CADDE HOUSE</div>
+
     <header class="bg-white shadow-md">
         <div class="container mx-auto p-4 flex justify-center items-center">
             <h1 class="text-xl font-bold">Cadde House Menu</h1>
