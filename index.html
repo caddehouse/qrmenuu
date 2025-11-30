@@ -117,6 +117,40 @@
 
         loadMenu();
     </script>
+    <style>
+    body {
+        background: #ffffff;
+        background-image:
+            repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 40px,
+                rgba(0, 0, 0, 0.03) 40px,
+                rgba(0, 0, 0, 0.03) 41px
+            );
+    }
+
+    /* CADDE HOUSE yazılarından oluşan watermark */
+    body::before {
+        content: "CADDE HOUSE  CADDE HOUSE  CADDE HOUSE  CADDE HOUSE";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 200%;
+        height: 200%;
+        font-size: 70px;
+        font-weight: bold;
+        color: #cc7a00;
+        opacity: 0.06;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: rotate(-20deg);
+        z-index: -1;
+    }
+</style>
+
 </body>
 
 </html>
